@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>izu3nelll | 映像制作 × AI自動化 フリーランス</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Zen+Kaku+Gothic+New:wght@300;400;700&family=DM+Mono:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1714;
+    --paper: #f5f0e8;
+    --accent: #c8502a;
+    --muted: #8a8278;
+    --light: #ede8de;
+    --border: #d4cec4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 300;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header-left {
+    padding: 80px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .header-right {
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 30% 70%, rgba(200, 80, 42, 0.3) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(200, 80, 42, 0.15) 0%, transparent 50%);
+  }
+
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(245,240,232,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,240,232,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .header-visual {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .header-visual .big-number {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(80px, 12vw, 160px);
+    color: rgba(245,240,232,0.08);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+  }
+
+  .skill-orbit {
+    position: relative;
+    width: 280px;
+    height: 280px;
+  }
+
+  .orbit-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 11px;
+    color: white;
+    letter-spacing: 0.1em;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .orbit-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    border-radius: 50%;
+    border: 1px solid rgba(245,240,232,0.15);
+  }
+
+  .orbit-ring-1 {
+    width: 160px; height: 160px;
+    margin: -80px 0 0 -80px;
+    animation: rotate 20s linear infinite;
+  }
+
+  .orbit-ring-2 {
+    width: 260px; height: 260px;
+    margin: -130px 0 0 -130px;
+    animation: rotate 35s linear infinite reverse;
+  }
+
+  .orbit-dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    top: -4px; left: 50%;
+    margin-left: -4px;
+  }
+
+  .orbit-label {
+    position: absolute;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(245,240,232,0.7);
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(42px, 5vw, 72px);
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .tagline {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.9;
+    max-width: 420px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    mix-blend-mode: multiply;
+  }
+
+  .nav-logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.1em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ink);
+    text-decoration: none;
+    text-transform: uppercase;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .nav-links a:hover { opacity: 1; }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 100px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 300;
+    line-height: 1.3;
+    margin-bottom: 48px;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── STRENGTHS ── */
+  .strengths-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 48px;
+  }
+
+  .strength-card {
+    background: var(--light);
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s ease;
+  }
+
+  .strength-card:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .strength-card:hover .strength-num,
+  .strength-card:hover .strength-desc {
+    color: rgba(245,240,232,0.5);
+  }
+
+  .strength-card:hover h3 {
+    color: var(--paper);
+  }
+
+  .strength-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+    transition: color 0.3s;
+  }
+
+  .strength-card h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 16px;
+    transition: color 0.3s;
+  }
+
+  .strength-desc {
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--muted);
+    transition: color 0.3s;
+  }
+
+  .strength-tag {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 4px 12px;
+    background: rgba(200,80,42,0.1);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── WORKS ── */
+  .works-section {
+    background: var(--ink);
+    color: var(--paper);
+    max-width: 100%;
+    padding: 100px 0;
+  }
+
+  .works-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 60px;
+  }
+
+  .works-section .section-label {
+    color: rgba(200,80,42,0.8);
+  }
+
+  .works-section h2 {
+    color: var(--paper);
+  }
+
+  .works-list {
+    margin-top: 48px;
+  }
+
+  .work-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    align-items: start;
+    gap: 32px;
+    padding: 36px 0;
+    border-bottom: 1px solid rgba(245,240,232,0.1);
+    transition: all 0.3s ease;
+    cursor: default;
+  }
+
+  .work-item:first-child {
+    border-top: 1px solid rgba(245,240,232,0.1);
+  }
+
+  .work-item:hover {
+    padding-left: 16px;
+  }
+
+  .work-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(245,240,232,0.3);
+    padding-top: 4px;
+  }
+
+  .work-content h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    color: var(--paper);
+  }
+
+  .work-content p {
+    font-size: 13px;
+    color: rgba(245,240,232,0.5);
+    line-height: 1.8;
+    max-width: 560px;
+  }
+
+  .work-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+    padding-top: 4px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border: 1px solid rgba(245,240,232,0.2);
+    color: rgba(245,240,232,0.5);
+    white-space: nowrap;
+  }
+
+  /* ── SKILLS ── */
+  .skills-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .skill-group {
+    margin-bottom: 40px;
+  }
+
+  .skill-group-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skill-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-chip {
+    padding: 8px 16px;
+    background: var(--light);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .skill-chip:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .skill-chip.pro {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .skill-chip.ai-collab {
+    border: 1px solid var(--border);
+    background: transparent;
+  }
+
+  .skills-note {
+    margin-top: 32px;
+    padding: 24px;
+    border-left: 3px solid var(--accent);
+    background: var(--light);
+  }
+
+  .skills-note p {
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+
+  .skills-note strong {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* ── STATS ── */
+  .stats-bar {
+    background: var(--accent);
+    padding: 60px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    text-align: center;
+  }
+
+  .stat-item {}
+
+  .stat-num {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: white;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+  }
+
+  /* ── CONTACT ── */
+  .contact-section {
+    text-align: center;
+    padding: 120px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-section::before {
+    content: 'CONTACT';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(80px, 15vw, 200px);
+    color: rgba(26,23,20,0.04);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: 0.1em;
+  }
+
+  .contact-section h2 {
+    font-size: clamp(36px, 5vw, 64px);
+    margin-bottom: 24px;
+  }
+
+  .contact-section p {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 48px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .contact-email {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(14px, 2vw, 22px);
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+    transition: color 0.2s;
+  }
+
+  .contact-email:hover { color: var(--accent); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 32px 60px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 60px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    header { grid-template-columns: 1fr; }
+    .header-right { display: none; }
+    .header-left { padding: 120px 32px 80px; }
+    nav { padding: 20px 32px; }
+    .nav-links { display: none; }
+    section { padding: 72px 32px; }
+    .strengths-grid { grid-template-columns: 1fr; gap: 2px; }
+    .skills-section { grid-template-columns: 1fr; gap: 48px; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 40px 32px; }
+    .works-inner { padding: 0 32px; }
+    .work-item { grid-template-columns: 48px 1fr; }
+    .work-tags { display: none; }
+    .contact-section { padding: 80px 32px; }
+    footer { padding: 24px 32px; flex-direction: column; gap: 12px; text-align: center; }
+    .divider { margin: 0 32px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">izu3nelll</div>
+  <ul class="nav-links">
+    <li><a href="#strengths">強み</a></li>
+    <li><a href="#works">実績</a></li>
+    <li><a href="#skills">スキル</a></li>
+    <li><a href="#contact">お問い合わせ</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header>
+  <div class="header-left">
+    <p class="eyebrow">Freelance Creator × AI Automation</p>
+    <h1>映像制作と<br>AI自動化で、<br><em>結果を出す。</em></h1>
+    <p class="tagline">
+      Adobe製品での動画制作を7年以上経験。<br>
+      AIツールと自動化の組み合わせで<br>制作時間を最大1/6に圧縮した実績あり。<br>
+      フルリモート・全国対応。
+    </p>
+    <div class="cta-group">
+      <a href="#contact" class="btn btn-primary">お仕事のご相談</a>
+      <a href="#works" class="btn btn-secondary">実績を見る</a>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="grid-lines"></div>
+    <div class="big-number">7Y</div>
+    <div class="header-visual">
+      <div class="skill-orbit">
+        <div class="orbit-ring orbit-ring-1">
+          <div class="orbit-dot"></div>
+        </div>
+        <div class="orbit-ring orbit-ring-2">
+          <div class="orbit-dot"></div>
+        </div>
+        <div class="orbit-center">映像制作<br>×<br>自動化</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">7<span style="font-size:24px">年</span></div>
+    <div class="stat-label">フリーランス歴</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">10<span style="font-size:24px">+</span></div>
+    <div class="stat-label">担当チャンネル数</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">1/6</div>
+    <div class="stat-label">制作時間の圧縮率</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">100<span style="font-size:24px">%</span></div>
+    <div class="stat-label">フルリモート対応</div>
+  </div>
+</div>
+
+<!-- STRENGTHS -->
+<section id="strengths">
+  <p class="section-label">01 — Strengths</p>
+  <h2>できること</h2>
+
+  <div class="strengths-grid">
+    <div class="strength-card">
+      <p class="strength-num">S — 01</p>
+      <h3>映像制作・動画編集</h3>
+      <p class="strength-desc">
+        Adobe Premiere Pro・After Effects・Photoshopを駆使した高品質な動画編集。モーショングラフィックス制作からYouTube投稿まで一貫対応。10チャンネル以上のディレクション実績あり。
+      </p>
+      <span class="strength-tag">PRO LEVEL</span>
+    </div>
+
+    <div class="strength-card">
+      <p class="strength-num">S — 02</p>
+      <h3>AI映像・音声制作</h3>
+      <p class="strength-desc">
+        ElevenLabsによる音声生成、HeyGenによるリップシンク動画、Kling・WANによるAI動画生成を組み合わせ、フルAI制作の映像コンテンツを制作可能。
+      </p>
+      <span class="strength-tag">AI COLLAB</span>
+    </div>
+
+    <div class="strength-card">
+      <p class="strength-num">S — 03</p>
+      <h3>業務自動化・ツール開発</h3>
+      <p class="strength-desc">
+        n8n・Google Apps Script・Pythonを活用した業務フローの自動化。ブログ記事の自動生成パイプラインや字幕生成Webアプリ（Docker + FastAPI）の開発実績あり。
+      </p>
+      <span class="strength-tag">AI COLLAB</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WORKS -->
+<div class="works-section" id="works">
+  <div class="works-inner">
+    <p class="section-label">02 — Works</p>
+    <h2>主な実績</h2>
+
+    <div class="works-list">
+      <div class="work-item">
+        <div class="work-num">01</div>
+        <div class="work-content">
+          <h3>YouTubeチャンネル運営・動画制作（7年）</h3>
+          <p>10チャンネル以上のオープニング・エンディング・テロップ素材の制作とディレクション。Photoshop ScriptとAfter EffectsのScript・Expressionsを活用し、制作フローを自動化。制作時間を1/6に圧縮した。</p>
+        </div>
+        <div class="work-tags">
+          <span class="tag">Premiere Pro</span>
+          <span class="tag">After Effects</span>
+          <span class="tag">自動化</span>
+        </div>
+      </div>
+
+      <div class="work-item">
+        <div class="work-num">02</div>
+        <div class="work-content">
+          <h3>ブログ記事自動生成パイプライン</h3>
+          <p>n8n・Claude API・Googleスプレッドシートを連携させ、キーワードからWordPress用HTML記事を自動生成するシステムを構築。独自のスタイルガイドシートによりブランドボイスを維持しながら量産が可能。</p>
+        </div>
+        <div class="work-tags">
+          <span class="tag">n8n</span>
+          <span class="tag">Claude API</span>
+          <span class="tag">WordPress</span>
+        </div>
+      </div>
+
+      <div class="work-item">
+        <div class="work-num">03</div>
+        <div class="work-content">
+          <h3>CaptionPaster — 字幕貼り付け自動化ツール</h3>
+          <p>Premiere Proへのシナリオコピー＆ペースト作業を自動化するWebアプリを自作・実運用中。手作業では煩雑だった字幕入力フローをツール化し、編集作業の効率を大幅に改善。ブラウザから使えるWebアプリとして動作し、Docker + FastAPIで構成。</p>
+        </div>
+        <div class="work-tags">
+          <span class="tag">Python</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Whisper</span>
+        </div>
+      </div>
+
+      <div class="work-item">
+        <div class="work-num">04</div>
+        <div class="work-content">
+          <h3>AIフル活用チャンネルの映像制作</h3>
+          <p>ElevenLabsの音声合成、HeyGenのリップシンク、Kling等のAI動画生成を組み合わせた20〜25分の長尺YouTube動画を制作。AIツールの選定から編集・納品まで一貫対応。</p>
+        </div>
+        <div class="work-tags">
+          <span class="tag">HeyGen</span>
+          <span class="tag">ElevenLabs</span>
+          <span class="tag">Kling</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-label">03 — Skills</p>
+  <h2>スキルセット</h2>
+
+  <div class="skills-section">
+    <div>
+      <div class="skill-group">
+        <p class="skill-group-title">映像制作 — Professional</p>
+        <div class="skill-items">
+          <span class="skill-chip pro">Adobe Premiere Pro</span>
+          <span class="skill-chip pro">After Effects</span>
+          <span class="skill-chip pro">Photoshop</span>
+          <span class="skill-chip pro">Illustrator</span>
+          <span class="skill-chip pro">YouTube 運用</span>
+          <span class="skill-chip pro">動画ディレクション</span>
+          <span class="skill-chip pro">モーショングラフィックス</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <p class="skill-group-title">AI映像・音声</p>
+        <div class="skill-items">
+          <span class="skill-chip">HeyGen</span>
+          <span class="skill-chip">ElevenLabs</span>
+          <span class="skill-chip">Kling</span>
+          <span class="skill-chip">WAN</span>
+          <span class="skill-chip">ComfyUI</span>
+          <span class="skill-chip">Stable Diffusion</span>
+          <span class="skill-chip">Vrew</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="skill-group">
+        <p class="skill-group-title">自動化・開発 — AI協働</p>
+        <div class="skill-items">
+          <span class="skill-chip ai-collab">n8n</span>
+          <span class="skill-chip ai-collab">Google Apps Script</span>
+          <span class="skill-chip ai-collab">Python</span>
+          <span class="skill-chip ai-collab">Docker</span>
+          <span class="skill-chip ai-collab">FastAPI</span>
+          <span class="skill-chip ai-collab">Claude API</span>
+          <span class="skill-chip ai-collab">ChatGPT API</span>
+          <span class="skill-chip ai-collab">WordPress</span>
+        </div>
+      </div>
+
+      <div class="skills-note">
+        <p>
+          <strong>「AI協働」について：</strong><br>
+          自動化・開発領域はAIと協働しながら実装しています。コードの保守・修正・機能追加まで対応可能で、実際に動くプロダクトを納品した実績があります。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <p class="section-label">04 — Contact</p>
+  <h2>お仕事のご相談</h2>
+  <p>
+    動画制作・AI自動化・業務効率化など、<br>
+    まずはお気軽にご連絡ください。<br>
+    フルリモートで全国対応しています。
+  </p>
+  <a href="/cdn-cgi/l/email-protection#1e67716b6c5e7b737f7772307d7173" class="contact-email"><span class="__cf_email__" data-cfemail="a7dec8d2d5e7c2cac6cecb89c4c8ca">[email&#160;protected]</span></a>
+</section>
+
+<footer>
+  <
