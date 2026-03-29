@@ -1,104 +1,166 @@
-/* ============================================
-   izumiemi portfolio — Main JS
-   ============================================ */
+/* ============================================================
+   izumiemi Portfolio — main.js
+   ============================================================ */
 
-document.addEventListener("DOMContentLoaded", () => {
-  // --- Mobile hamburger ---
-  const hamburger = document.querySelector(".nav__hamburger");
-  const overlay = document.querySelector(".nav__overlay");
+(function () {
+  'use strict';
 
-  if (hamburger && overlay) {
-    hamburger.addEventListener("click", () => {
-      hamburger.classList.toggle("open");
-      overlay.classList.toggle("open");
-      document.body.style.overflow = overlay.classList.contains("open") ? "hidden" : "";
+  /* ── 要素取得 ─────────────────────────────── */
+  const nav           = document.getElementById('nav');
+  const navList       = document.getElementById('navList');
+  const navLinks      = document.querySelectorAll('.nav__link');
+  const hamburger     = document.getElementById('navHamburger');
+  const sections      = document.querySelectorAll('section[id]');
+  const fadeEls       = document.querySelectorAll(
+    '.sec__header, .strengths-grid, .works-list, .skills-grid, .skills-note, ' +
+    '.mindset-lead, .mindset-articles, .contact-layout'
+  );
+  const contactForm   = document.getElementById('contactForm');
+  const formSuccess   = document.getElementById('formSuccess');
+  const formError     = document.getElementById('formError');
+
+  /* ── スクロール時の Nav スタイル ──────────── */
+  function onScroll() {
+    // scrolled クラス（背景ぼかし）
+    nav.classList.toggle('is-scrolled', window.scrollY > 20);
+
+    // アクティブリンクのハイライト
+    let current = '';
+    sections.forEach(sec => {
+      const top = sec.getBoundingClientRect().top;
+      if (top <= 100) current = sec.id;
     });
-    overlay.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        hamburger.classList.remove("open");
-        overlay.classList.remove("open");
-        document.body.style.overflow = "";
-      });
+    navLinks.forEach(link => {
+      link.classList.toggle('is-active', link.dataset.section === current);
     });
   }
 
-  // --- Fade-in on scroll ---
-  const faders = document.querySelectorAll(".fade-in");
-  if (faders.length > 0) {
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll(); // 初期実行
+
+  /* ── ハンバーガーメニュー ─────────────────── */
+  hamburger.addEventListener('click', () => {
+    const isOpen = navList.classList.toggle('is-open');
+    hamburger.classList.toggle('is-open', isOpen);
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    hamburger.setAttribute('aria-label', isOpen ? 'メニューを閉じる' : 'メニューを開く');
+    // メニューが開いている間はスクロール禁止
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  // リンクをクリックしたらメニューを閉じる
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      navList.classList.remove('is-open');
+      hamburger.classList.remove('is-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.setAttribute('aria-label', 'メニューを開く');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Escape キーでメニューを閉じる
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && navList.classList.contains('is-open')) {
+      navList.classList.remove('is-open');
+      hamburger.classList.remove('is-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      hamburger.focus();
+    }
+  });
+
+  /* ── スクロールアニメーション（Intersection Observer）── */
+  if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
+            entry.target.classList.add('is-visible');
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -30px 0px" }
+      { threshold: 0.12 }
     );
-    faders.forEach((el) => observer.observe(el));
+    fadeEls.forEach(el => observer.observe(el));
+  } else {
+    // フォールバック：Observer未対応の場合は即表示
+    fadeEls.forEach(el => el.classList.add('is-visible'));
   }
 
-  // --- Stagger delays ---
-  document.querySelectorAll("[data-stagger]").forEach((group) => {
-    const children = group.querySelectorAll(".fade-in");
-    children.forEach((child, i) => {
-      child.style.transitionDelay = `${i * 0.08}s`;
+  /* ── お問い合わせフォーム ─────────────────── */
+  if (contactForm) {
+    contactForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // リセット
+      formSuccess.classList.remove('is-visible');
+      formError.classList.remove('is-visible');
+
+      const name    = document.getElementById('fname').value.trim();
+      const email   = document.getElementById('femail').value.trim();
+      const subject = document.getElementById('fsubject').value.trim();
+      const message = document.getElementById('fmessage').value.trim();
+
+      // バリデーション
+      let hasError = false;
+      [
+        { id: 'fname',    val: name },
+        { id: 'femail',   val: email },
+        { id: 'fmessage', val: message }
+      ].forEach(({ id, val }) => {
+        const el = document.getElementById(id);
+        if (!val) {
+          el.classList.add('is-error');
+          hasError = true;
+          el.addEventListener('input', () => el.classList.remove('is-error'), { once: true });
+        }
+      });
+
+      // メールアドレス形式チェック
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('femail').classList.add('is-error');
+        hasError = true;
+      }
+
+      if (hasError) {
+        formError.classList.add('is-visible');
+        formError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
+
+      // mailto で送信（バックエンドなし対応）
+      const mailSubject = subject || 'ポートフォリオサイトよりお問い合わせ';
+      const mailBody =
+        `お名前: ${name}\n` +
+        `メールアドレス: ${email}\n` +
+        `件名: ${mailSubject}\n\n` +
+        `${message}`;
+
+      const mailto =
+        `mailto:copy.con.file.txt@gmail.com` +
+        `?subject=${encodeURIComponent(mailSubject)}` +
+        `&body=${encodeURIComponent(mailBody)}`;
+
+      window.location.href = mailto;
+
+      // 成功メッセージ
+      formSuccess.classList.add('is-visible');
+      const submitBtn = contactForm.querySelector('.btn--submit');
+      if (submitBtn) submitBtn.style.display = 'none';
+    });
+  }
+
+  /* ── Smooth scroll — href="#id" のリンク ──── */
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.scrollY - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 68);
+      window.scrollTo({ top, behavior: 'smooth' });
     });
   });
 
-  // --- Inner page subtle background canvas ---
-  const canvas = document.getElementById("bg-canvas-inner");
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d");
-  let w, h, time = 0, animId;
-
-  function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    w = window.innerWidth;
-    h = window.innerHeight;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = w + "px";
-    canvas.style.height = h + "px";
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  window.addEventListener("resize", resize);
-  resize();
-
-  // Subtle ambient glow spots
-  const glows = [
-    { x: 0.2, y: 0.3, r: 400, hue: 250, alpha: 0.04 },
-    { x: 0.8, y: 0.6, r: 350, hue: 230, alpha: 0.03 },
-    { x: 0.5, y: 0.8, r: 300, hue: 260, alpha: 0.025 },
-  ];
-
-  function animate() {
-    time++;
-    ctx.clearRect(0, 0, w, h);
-
-    glows.forEach((g, i) => {
-      const ox = Math.sin(time * 0.003 + i * 2) * 60;
-      const oy = Math.cos(time * 0.004 + i * 1.5) * 40;
-      const grd = ctx.createRadialGradient(
-        w * g.x + ox, h * g.y + oy, 0,
-        w * g.x + ox, h * g.y + oy, g.r
-      );
-      grd.addColorStop(0, `hsla(${g.hue}, 40%, 50%, ${g.alpha})`);
-      grd.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, w, h);
-    });
-
-    animId = requestAnimationFrame(animate);
-  }
-
-  animate();
-
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) cancelAnimationFrame(animId);
-    else animate();
-  });
-});
+})();

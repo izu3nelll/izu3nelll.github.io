@@ -1,288 +1,427 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>izumiemi | 映像制作 × AI自動化 フリーランス</title>
-  <meta name="description" content="映像制作とAI自動化で、結果を出す。Adobe製品での動画制作歴12年。AIツールと自動化で制作時間を最大1/6に圧縮。フルリモート・全国対応のフリーランスクリエイター。">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Noto+Sans+JP:wght@300;400;500;600&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --font-display: "Cormorant Garamond", serif;
-      --font-mincho: "Shippori Mincho", serif;
-      --font-body: "Noto Sans JP", sans-serif;
-    }
-    html, body { width: 100%; height: 100%; overflow: hidden; }
-    body {
-      background: #0a0a0c;
-      color: #e8e8e8;
-      font-family: var(--font-body);
-      -webkit-font-smoothing: antialiased;
-    }
-    #bg-canvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-    }
-    .home-overlay {
-      position: relative;
-      z-index: 1;
-      width: 100%; height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: clamp(28px, 4vw, 48px);
-    }
-
-    /* Top */
-    .home-identity {
-      opacity: 0;
-      animation: fadeUp 1s ease 0.3s forwards;
-    }
-    .home-name {
-      font-family: var(--font-display);
-      font-size: clamp(2rem, 4.5vw, 3.6rem);
-      font-weight: 400;
-      letter-spacing: 0.02em;
-      line-height: 1.2;
-      color: #fff;
-    }
-    .home-tagline {
-      font-size: 0.78rem;
-      letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.35);
-      margin-top: 8px;
-      font-weight: 300;
-    }
-    .home-tagline span {
-      margin-right: 4px;
-      color: rgba(255,255,255,0.2);
-    }
-
-    /* Nav */
-    .home-nav {
-      margin-top: clamp(40px, 6vh, 80px);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      opacity: 0;
-      animation: fadeUp 1s ease 0.6s forwards;
-    }
-    .home-nav a {
-      font-size: 0.88rem;
-      font-weight: 500;
-      color: rgba(255,255,255,0.55);
-      text-decoration: none;
-      letter-spacing: 0.06em;
-      transition: color 0.3s, transform 0.3s;
-      display: inline-block;
-      width: fit-content;
-    }
-    .home-nav a:hover {
-      color: #fff;
-      transform: translateX(6px);
-    }
-
-    /* Bottom */
-    .home-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      opacity: 0;
-      animation: fadeUp 1s ease 0.9s forwards;
-    }
-    .home-headline { max-width: 620px; }
-    .home-headline__main {
-      font-family: var(--font-mincho);
-      font-size: clamp(1.2rem, 2.8vw, 1.65rem);
-      font-weight: 500;
-      line-height: 1.9;
-      letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.9);
-    }
-    .home-headline__main em {
-      font-style: normal;
-      color: #fff;
-    }
-    .home-headline__sub {
-      font-size: 0.76rem;
-      color: rgba(255,255,255,0.3);
-      margin-top: 16px;
-      line-height: 1.9;
-      letter-spacing: 0.03em;
-      font-weight: 300;
-    }
-
-    /* Numbers */
-    .home-numbers {
-      display: flex;
-      gap: clamp(24px, 4vw, 48px);
-      align-items: flex-end;
-    }
-    .home-numbers__item { text-align: right; }
-    .home-numbers__value {
-      font-family: var(--font-display);
-      font-size: clamp(1.4rem, 2.5vw, 2rem);
-      font-weight: 300;
-      color: rgba(255,255,255,0.65);
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-    }
-    .home-numbers__label {
-      font-size: 0.58rem;
-      color: rgba(255,255,255,0.2);
-      letter-spacing: 0.06em;
-      margin-top: 4px;
-      display: block;
-      white-space: nowrap;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 768px) {
-      .home-bottom {
-        flex-direction: column;
-        gap: 36px;
-        align-items: flex-start;
-      }
-      .home-numbers { align-items: flex-start; gap: 20px; }
-      .home-numbers__item { text-align: left; }
-    }
-    @media (max-width: 480px) {
-      .home-nav { gap: 10px; }
-      .home-nav a { font-size: 0.84rem; }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>izumiemi — Freelance Creator × AI Automation</title>
+  <meta name="description" content="映像制作歴12年のフリーランスクリエイター izumiemi。Adobe製品での動画制作とAIツール・自動化の組み合わせで、制作時間を最大1/6に圧縮した実績あり。フルリモート・全国対応。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <canvas id="bg-canvas"></canvas>
+  <!-- ================================================
+       NAVIGATION
+  ================================================ -->
+  <nav class="nav" id="nav">
+    <a href="#hero" class="nav__brand">izumiemi</a>
+    <ul class="nav__list" id="navList">
+      <li><a href="#strengths" class="nav__link" data-section="strengths">強み</a></li>
+      <li><a href="#works"     class="nav__link" data-section="works">実績</a></li>
+      <li><a href="#skills"    class="nav__link" data-section="skills">スキル</a></li>
+      <li><a href="#mindset"   class="nav__link" data-section="mindset">マインドセット</a></li>
+      <li><a href="#contact"   class="nav__link" data-section="contact">お問い合わせ</a></li>
+    </ul>
+    <button class="nav__hamburger" id="navHamburger" aria-label="メニューを開く" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
 
-  <div class="home-overlay">
-    <div>
-      <div class="home-identity">
-        <h1 class="home-name">izumiemi</h1>
-        <p class="home-tagline"><span>—</span> Freelance Creator × AI Automation</p>
+  <!-- ================================================
+       HERO
+  ================================================ -->
+  <section class="hero" id="hero">
+    <div class="hero__content">
+      <p class="hero__sub">Freelance Creator × AI Automation</p>
+      <h1 class="hero__title">映像制作とAI自動化で、<br>結果を出す。</h1>
+      <p class="hero__body">
+        Adobe製品での動画制作歴12年（2026/03時点）。<br>
+        AIツールと自動化の組み合わせで<br>
+        制作時間を最大1/6に圧縮した実績あり。<br>
+        フルリモート・全国対応。
+      </p>
+      <div class="hero__cta">
+        <a href="#contact" class="btn btn--primary">お仕事のご相談</a>
+        <a href="#works"   class="btn btn--ghost">実績を見る</a>
       </div>
-      <nav class="home-nav">
-        <a href="works.html">Works</a>
-        <a href="skills.html">Skills</a>
-        <a href="mindset.html">Mindset</a>
-        <a href="mailto:copy.con.file.txt@gmail.com">Contact</a>
-      </nav>
+    </div>
+    <div class="hero__stats">
+      <div class="stat">
+        <span class="stat__num">12年</span>
+        <span class="stat__label">フリーランス歴</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num">10+</span>
+        <span class="stat__label">担当チャンネル数</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num">1/6</span>
+        <span class="stat__label">制作時間の圧縮率</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num">100%</span>
+        <span class="stat__label">フルリモート対応</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================
+       01 STRENGTHS
+  ================================================ -->
+  <section class="sec" id="strengths">
+    <div class="sec__header">
+      <span class="sec__num">01</span>
+      <div class="sec__head-text">
+        <p class="sec__label">STRENGTHS</p>
+        <h2 class="sec__title">できること</h2>
+      </div>
     </div>
 
-    <div class="home-bottom">
-      <div class="home-headline">
-        <p class="home-headline__main">映像制作とAI自動化で、<em>結果を出す。</em></p>
-        <p class="home-headline__sub">
-          Adobe製品での動画制作歴12年。<br>
-          AIツールと自動化の組み合わせで制作時間を最大1/6に圧縮。<br>
-          フルリモート・全国対応。
+    <div class="strengths-grid">
+
+      <div class="s-card">
+        <span class="s-card__badge s-card__badge--pro">PRO LEVEL</span>
+        <h3 class="s-card__title">映像制作・動画編集</h3>
+        <p class="s-card__text">
+          Adobe Premiere Pro・After Effects・Photoshopを駆使した高品質な動画編集。
+          モーショングラフィックス制作からYouTube投稿まで一貫対応。
+          10チャンネル以上のディレクション実績あり。
         </p>
       </div>
-      <div class="home-numbers">
-        <div class="home-numbers__item">
-          <span class="home-numbers__value">12Y</span>
-          <span class="home-numbers__label">フリーランス歴</span>
-        </div>
-        <div class="home-numbers__item">
-          <span class="home-numbers__value">10+</span>
-          <span class="home-numbers__label">チャンネル</span>
-        </div>
-        <div class="home-numbers__item">
-          <span class="home-numbers__value">1/6</span>
-          <span class="home-numbers__label">圧縮率</span>
-        </div>
+
+      <div class="s-card">
+        <span class="s-card__badge s-card__badge--ai">AI COLLAB</span>
+        <h3 class="s-card__title">AI映像・音声制作</h3>
+        <p class="s-card__text">
+          ElevenLabsによる音声生成、HeyGenによるリップシンク動画、
+          Kling・WANによるAI動画生成を組み合わせ、
+          フルAI制作の映像コンテンツを制作可能。
+        </p>
+      </div>
+
+      <div class="s-card">
+        <span class="s-card__badge s-card__badge--ai">AI COLLAB</span>
+        <h3 class="s-card__title">業務自動化・ツール開発</h3>
+        <p class="s-card__text">
+          AdobeのPhotoshop Script、After EffectsのScript・Expressionsによる
+          制作フロー自動化に加え、Google Apps Script・Pythonを活用した
+          業務フローの自動化にも対応。字幕生成Webアプリやデスクトップアプリなど、
+          実務で使えるツールの開発実績あり。
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================
+       02 WORKS
+  ================================================ -->
+  <section class="sec sec--alt" id="works">
+    <div class="sec__header">
+      <span class="sec__num">02</span>
+      <div class="sec__head-text">
+        <p class="sec__label">WORKS</p>
+        <h2 class="sec__title">主な実績</h2>
       </div>
     </div>
-  </div>
 
-  <script>
-    (() => {
-      const canvas = document.getElementById("bg-canvas");
-      const ctx = canvas.getContext("2d");
-      let w, h, time = 0, animId;
-      let mouse = { x: 0.5, y: 0.5 };
+    <div class="works-list">
 
-      function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        w = window.innerWidth; h = window.innerHeight;
-        canvas.width = w * dpr; canvas.height = h * dpr;
-        canvas.style.width = w + "px"; canvas.style.height = h + "px";
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-      window.addEventListener("resize", resize);
-      resize();
+      <article class="work-item">
+        <div class="work-item__left">
+          <span class="work-item__num">01</span>
+        </div>
+        <div class="work-item__body">
+          <h3 class="work-item__title">YouTubeチャンネル運営・動画制作（7年）</h3>
+          <p class="work-item__text">
+            10チャンネル以上のオープニング・エンディング・テロップ素材の制作とディレクション。
+            Photoshop ScriptとAfter EffectsのScript・Expressionsを活用し、制作フローを自動化。
+            制作時間を1/6に圧縮した。
+          </p>
+          <div class="tags">
+            <span class="tag">Premiere Pro</span>
+            <span class="tag">After Effects</span>
+            <span class="tag">自動化</span>
+          </div>
+        </div>
+      </article>
 
-      window.addEventListener("mousemove", (e) => {
-        mouse.x = e.clientX / w; mouse.y = e.clientY / h;
-      });
+      <article class="work-item">
+        <div class="work-item__left">
+          <span class="work-item__num">02</span>
+        </div>
+        <div class="work-item__body">
+          <h3 class="work-item__title">capture_man — 自動動画キャプチャツール</h3>
+          <p class="work-item__text">
+            Pythonを用いてローカル内の動画を指定秒数間隔でキャプチャし保存するデスクトップアプリを開発。
+            動画構成などの確認作業の時短に対応。インストーラーで導入可能。
+            Python環境の別途構築は不要。
+          </p>
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">デスクトップアプリ</span>
+            <span class="tag">業務効率化</span>
+          </div>
+        </div>
+      </article>
 
-      const waves = [];
-      const waveCount = 22;
-      for (let i = 0; i < waveCount; i++) {
-        const t = i / waveCount;
-        waves.push({
-          yOffset: 0.2 + t * 0.6,
-          amplitude: 35 + Math.random() * 55,
-          frequency: 0.002 + Math.random() * 0.003,
-          speed: 0.008 + Math.random() * 0.012,
-          phase: Math.random() * Math.PI * 2,
-          alpha: 0.03 + (1 - Math.abs(t - 0.5) * 2) * 0.1,
-          hue: 235 + i * 5.5,
-          thickness: 0.6 + Math.random() * 0.5,
-        });
-      }
+      <article class="work-item">
+        <div class="work-item__left">
+          <span class="work-item__num">03</span>
+        </div>
+        <div class="work-item__body">
+          <h3 class="work-item__title">CaptionPaster — 字幕貼り付け自動化ツール</h3>
+          <p class="work-item__text">
+            Premiere Proへのシナリオコピー＆ペースト作業を自動化するWebアプリを自作・実運用中。
+            手作業では煩雑だった字幕入力フローをツール化し、編集作業の効率を大幅に改善。
+            ブラウザから使えるWebアプリとして動作。
+          </p>
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">Webアプリ</span>
+            <span class="tag">Premiere Pro連携</span>
+          </div>
+        </div>
+      </article>
 
-      function drawWave(wave, t) {
-        ctx.beginPath();
-        const mxInf = (mouse.x - 0.5) * 40;
-        const myInf = (mouse.y - 0.5) * 25;
-        for (let x = -20; x <= w + 20; x += 3) {
-          const nx = x / w;
-          const baseY = h * wave.yOffset;
-          const y1 = Math.sin(x * wave.frequency + t * wave.speed + wave.phase) * wave.amplitude;
-          const y2 = Math.sin(x * wave.frequency * 1.7 + t * wave.speed * 0.6 + wave.phase * 1.4) * wave.amplitude * 0.35;
-          const y3 = Math.sin(x * wave.frequency * 0.4 + t * wave.speed * 1.2) * wave.amplitude * 0.2;
-          const dx = nx - mouse.x;
-          const dy = (baseY / h) - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const push = Math.exp(-dist * dist * 6) * (mxInf + myInf);
-          const y = baseY + y1 + y2 + y3 + push;
-          x === -20 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        const hue = wave.hue + Math.sin(t * 0.003) * 12;
-        const sat = 35 + Math.sin(t * 0.004 + wave.phase) * 20;
-        ctx.strokeStyle = `hsla(${hue}, ${sat}%, 55%, ${wave.alpha})`;
-        ctx.lineWidth = wave.thickness;
-        ctx.stroke();
-      }
+      <article class="work-item">
+        <div class="work-item__left">
+          <span class="work-item__num">04</span>
+        </div>
+        <div class="work-item__body">
+          <h3 class="work-item__title">AIフル活用チャンネルの映像制作</h3>
+          <p class="work-item__text">
+            ElevenLabsの音声合成、HeyGenのリップシンク、Kling等のAI動画生成を組み合わせた
+            長尺のYouTube動画を制作。AIツールの選定から編集・納品まで一貫対応。
+          </p>
+          <div class="tags">
+            <span class="tag">HeyGen</span>
+            <span class="tag">ElevenLabs</span>
+            <span class="tag">Kling</span>
+          </div>
+        </div>
+      </article>
 
-      function animate() {
-        time++;
-        ctx.clearRect(0, 0, w, h);
-        const grd = ctx.createRadialGradient(w * mouse.x, h * mouse.y, 0, w * mouse.x, h * mouse.y, w * 0.45);
-        grd.addColorStop(0, "rgba(50, 30, 90, 0.07)");
-        grd.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = grd;
-        ctx.fillRect(0, 0, w, h);
-        waves.forEach((wave) => drawWave(wave, time));
-        animId = requestAnimationFrame(animate);
-      }
-      animate();
+    </div>
+  </section>
 
-      document.addEventListener("visibilitychange", () => {
-        if (document.hidden) cancelAnimationFrame(animId); else animate();
-      });
-    })();
-  </script>
+  <!-- ================================================
+       03 SKILLS
+  ================================================ -->
+  <section class="sec" id="skills">
+    <div class="sec__header">
+      <span class="sec__num">03</span>
+      <div class="sec__head-text">
+        <p class="sec__label">SKILLS</p>
+        <h2 class="sec__title">スキルセット</h2>
+      </div>
+    </div>
+
+    <div class="skills-grid">
+
+      <div class="skill-cat">
+        <div class="skill-cat__head">
+          <span class="skill-cat__badge skill-cat__badge--pro">Professional</span>
+          <h3 class="skill-cat__name">映像制作</h3>
+        </div>
+        <div class="tags tags--loose">
+          <span class="tag">Adobe Premiere Pro</span>
+          <span class="tag">After Effects</span>
+          <span class="tag">Photoshop</span>
+          <span class="tag">Illustrator</span>
+          <span class="tag">YouTube 運用</span>
+          <span class="tag">動画ディレクション</span>
+          <span class="tag">モーショングラフィックス</span>
+        </div>
+      </div>
+
+      <div class="skill-cat">
+        <div class="skill-cat__head">
+          <span class="skill-cat__badge skill-cat__badge--ai">AI Collab</span>
+          <h3 class="skill-cat__name">AI映像・音声</h3>
+        </div>
+        <div class="tags tags--loose">
+          <span class="tag">HeyGen</span>
+          <span class="tag">ElevenLabs</span>
+          <span class="tag">Kling</span>
+          <span class="tag">WAN</span>
+          <span class="tag">ComfyUI</span>
+          <span class="tag">Stable Diffusion</span>
+          <span class="tag">Vrew</span>
+        </div>
+      </div>
+
+      <div class="skill-cat">
+        <div class="skill-cat__head">
+          <span class="skill-cat__badge skill-cat__badge--ai">AI Collab</span>
+          <h3 class="skill-cat__name">自動化・開発</h3>
+        </div>
+        <div class="tags tags--loose">
+          <span class="tag">Google Apps Script</span>
+          <span class="tag">Python</span>
+          <span class="tag">Docker</span>
+          <span class="tag">FastAPI</span>
+          <span class="tag">Claude API</span>
+          <span class="tag">ChatGPT API</span>
+          <span class="tag">WordPress</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="skills-note">
+      <strong>「AI協働」について</strong>
+      自動化・開発領域はAIと協働しながら実装しています。
+      コードの保守・修正・機能追加まで対応可能で、実際に動くプロダクトを納品した実績があります。
+    </p>
+  </section>
+
+  <!-- ================================================
+       04 MINDSET
+  ================================================ -->
+  <section class="sec sec--alt" id="mindset">
+    <div class="sec__header">
+      <span class="sec__num">04</span>
+      <div class="sec__head-text">
+        <p class="sec__label">MINDSET</p>
+        <h2 class="sec__title">My Creative Mindset</h2>
+      </div>
+    </div>
+
+    <p class="mindset-lead">
+      スキルは進化する。でも、仕事に向き合う姿勢は変わらない。
+    </p>
+
+    <div class="mindset-articles">
+
+      <article class="mindset-article">
+        <h3 class="mindset-article__title">映像制作について</h3>
+        <div class="mindset-article__body">
+          <p>チャンネルや動画の特性に合わせて、配色・テロップの可読性・テンポ感を細かく調整しています。子供向けとシニア向けでは、最適な配色もテンポも当然異なります。届ける相手が違えば、作り方も変わる。その前提を常に意識しています。</p>
+          <p>編集作業では、1フレームに拘ります。例えばテロップの表示タイミングとシーンの切り替わりが1フレームでもずれていると、視聴者は言語化できない違和感を覚えます。その「なんとなく気持ち悪い」を生まないことが、プロの編集だと考えています。</p>
+          <p>音量調整においては、競合となるベンチマークチャンネルを分析し、同等の音量感に合わせます。視聴者は似たジャンルの動画を続けて観る傾向があるため、音量に違和感がないことは、離脱を防ぎ、コンテンツそのものに集中してもらうための地味だけれど重要な配慮です。</p>
+        </div>
+      </article>
+
+      <article class="mindset-article">
+        <h3 class="mindset-article__title">AIとの協働について</h3>
+        <div class="mindset-article__body">
+          <p>AIはあくまでも道具の一つとして捉えています。</p>
+          <p>ただし、ただの便利ツールではなく、時にアイディアをくれる存在でもあります。いわば人間の脳を拡張してくれるもの。最終的な判断や方向性を決めるのは自分自身ですが、AIとの対話を通じて、一人では辿り着けなかった選択肢に気づくことも少なくありません。</p>
+          <p>使いこなすのは、あくまで人間。その前提を忘れずに、AIの力を最大限引き出すことを心がけています。</p>
+        </div>
+      </article>
+
+      <article class="mindset-article">
+        <h3 class="mindset-article__title">自動化について</h3>
+        <div class="mindset-article__body">
+          <p>自動化にこだわる理由は、単なる時短だけではありません。</p>
+          <p>自動化すると、品質が固定されます。手作業で起きるばらつきやミスがなくなり、常に一定のクオリティを維持できる。これが一つ目のメリットです。</p>
+          <p>そしてもう一つ、私が最も大きいと考えているのは、比較的スキルのない初学者でも、現場の編集者と同等のクオリティで戦力になれるという点です。自分しかできない作業を減らし、チームとして回せる体制を作る。自動化とは、属人性を排除し、制作体制そのものを強くする手段だと考えています。</p>
+        </div>
+      </article>
+
+      <article class="mindset-article">
+        <h3 class="mindset-article__title">フリーランスとして</h3>
+        <div class="mindset-article__body">
+          <p>動画制作を始めたきっかけは、自分の意志ではありませんでした。パソコンが得意だという理由で声がかかり、Premiere Proを2週間学んだ直後に最初の仕事を受けました。準備期間を決めたのはクライアントの判断でしたが、結果的にその「まず飛び込んで、走りながら覚える」という経験が、12年経った今でも自分の仕事のベースになっています。</p>
+          <p>振り返ると、自分でキャリアの方向性を決めたことはほとんどありません。動画制作も、AI活用も、自動化も、周囲の方々に求められる中で身についたものです。仕事を選ぶというよりも、仕事に呼んでもらっている感覚が近い。そして不思議なことに、呼ばれた先で得たスキルや経験が、その後の自分に必要なパーツだったと気づくことがしばしばあります。だから私は、声をかけていただいた仕事に対して、全力で応えることを大切にしています。</p>
+          <p>その現場の中で、既存のツールでは解決できない不便に何度もぶつかってきました。字幕入力の手間、動画構成の確認作業、繰り返しの単純作業。そのたびに「無いなら作ればいい」と考え、自分の手で解決してきました。CaptionPasterもcapture_manも、誰かの「これ面倒だな」から生まれたツールです。不便を放置せず、形にする。この習慣が、映像制作者としての自分の領域を自動化やツール開発へと広げてくれました。</p>
+          <p>12年前はPremiere Proしか使えない動画編集者でした。そこからAfter Effects、AIツール、Python、業務自動化と、必要に迫られるたびに新しい技術を取り込んできました。変化を恐れるよりも、変化の中に次の武器を見つける方が性に合っています。映像制作という軸は変わりませんが、その周辺に広がるスキルは、これからも増え続けると思います。</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================================================
+       05 CONTACT
+  ================================================ -->
+  <section class="sec contact-sec" id="contact">
+    <div class="sec__header">
+      <span class="sec__num">05</span>
+      <div class="sec__head-text">
+        <p class="sec__label">CONTACT</p>
+        <h2 class="sec__title">お仕事のご相談</h2>
+      </div>
+    </div>
+
+    <div class="contact-layout">
+
+      <!-- Info -->
+      <div class="contact-info">
+        <p class="contact-info__text">
+          動画制作・AI自動化・業務効率化など、<br>
+          まずはお気軽にご連絡ください。<br>
+          フルリモートで全国対応しています。
+        </p>
+        <a href="mailto:copy.con.file.txt@gmail.com" class="contact-info__email">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+          copy.con.file.txt@gmail.com
+        </a>
+      </div>
+
+      <!-- Form -->
+      <form class="contact-form" id="contactForm" novalidate>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="fname">お名前 <span class="form-req">*</span></label>
+            <input class="form-input" type="text" id="fname" name="name" placeholder="山田 太郎" autocomplete="name" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="femail">メールアドレス <span class="form-req">*</span></label>
+            <input class="form-input" type="email" id="femail" name="email" placeholder="example@email.com" autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fsubject">件名</label>
+          <input class="form-input" type="text" id="fsubject" name="subject" placeholder="お仕事のご相談" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fmessage">メッセージ <span class="form-req">*</span></label>
+          <textarea class="form-textarea" id="fmessage" name="message" placeholder="ご依頼内容やご質問をお書きください。" required></textarea>
+        </div>
+
+        <div class="form-success" id="formSuccess" role="alert" aria-live="polite">
+          ありがとうございます。メールアプリが開きます。<br>
+          内容をご確認の上、送信してください。
+        </div>
+
+        <div class="form-error" id="formError" role="alert" aria-live="polite">
+          お名前・メールアドレス・メッセージは必須項目です。
+        </div>
+
+        <button class="btn btn--submit" type="submit">
+          送信する
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+      </form>
+    </div>
+  </section>
+
+  <!-- ================================================
+       FOOTER
+  ================================================ -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <p class="footer__copy">&copy; 2026 izumiemi All Rights Reserved.</p>
+      <a href="mailto:copy.con.file.txt@gmail.com" class="footer__email">
+        copy.con.file.txt@gmail.com
+      </a>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
 </body>
 </html>
