@@ -9,16 +9,15 @@
 </head>
 <body>
 
-  <canvas id="bg-canvas-inner" class="bg-canvas-inner"></canvas>
+  <canvas id="bg-canvas" class="bg-canvas-inner"></canvas>
 
   <nav class="nav">
     <a href="index.html" class="nav__logo">izumiemi</a>
     <ul class="nav__links">
       <li><a href="works.html" class="active">Works</a></li>
-      <li class="nav-dot">●</li>
       <li><a href="skills.html">Skills</a></li>
       <li><a href="mindset.html">Mindset</a></li>
-      <li><a href="mailto:copy.con.file.txt@gmail.com">Contact</a></li>
+      <li><a href="contact.html">Contact</a></li>
     </ul>
     <div class="nav__hamburger" aria-label="メニューを開く">
       <span></span><span></span><span></span>
@@ -28,7 +27,7 @@
       <a href="works.html" class="active">Works</a>
       <a href="skills.html">Skills</a>
       <a href="mindset.html">Mindset</a>
-      <a href="mailto:copy.con.file.txt@gmail.com">Contact</a>
+      <a href="contact.html">Contact</a>
     </div>
   </nav>
 
@@ -137,7 +136,7 @@
         <p class="contact-footer__label fade-in">Contact</p>
         <h2 class="contact-footer__title fade-in">お仕事のご相談</h2>
         <p class="contact-footer__desc fade-in">動画制作・AI自動化・業務効率化など、<br>まずはお気軽にご連絡ください。<br>フルリモートで全国対応しています。</p>
-        <a href="mailto:copy.con.file.txt@gmail.com" class="contact-footer__email fade-in">copy.con.file.txt@gmail.com</a>
+        <a href="contact.html" class="contact-footer__email fade-in">Contact →</a>
       </div>
     </footer>
     <div class="site-footer">
@@ -147,6 +146,86 @@
     </div>
 
   </div>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById("bg-canvas");
+      const ctx = canvas.getContext("2d");
+      let w, h, time = 0, animId;
+      let mouse = { x: 0.5, y: 0.5 };
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = window.innerWidth; h = window.innerHeight;
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        canvas.style.width = w + "px"; canvas.style.height = h + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      window.addEventListener("mousemove", (e) => {
+        mouse.x = e.clientX / w; mouse.y = e.clientY / h;
+      });
+
+      const waves = [];
+      const waveCount = 22;
+      for (let i = 0; i < waveCount; i++) {
+        const t = i / waveCount;
+        waves.push({
+          yOffset: 0.2 + t * 0.6,
+          amplitude: 35 + Math.random() * 55,
+          frequency: 0.002 + Math.random() * 0.003,
+          speed: 0.008 + Math.random() * 0.012,
+          phase: Math.random() * Math.PI * 2,
+          alpha: 0.03 + (1 - Math.abs(t - 0.5) * 2) * 0.1,
+          hue: 235 + i * 5.5,
+          thickness: 0.6 + Math.random() * 0.5,
+        });
+      }
+
+      function drawWave(wave, t) {
+        ctx.beginPath();
+        const mxInf = (mouse.x - 0.5) * 40;
+        const myInf = (mouse.y - 0.5) * 25;
+        for (let x = -20; x <= w + 20; x += 3) {
+          const nx = x / w;
+          const baseY = h * wave.yOffset;
+          const y1 = Math.sin(x * wave.frequency + t * wave.speed + wave.phase) * wave.amplitude;
+          const y2 = Math.sin(x * wave.frequency * 1.7 + t * wave.speed * 0.6 + wave.phase * 1.4) * wave.amplitude * 0.35;
+          const y3 = Math.sin(x * wave.frequency * 0.4 + t * wave.speed * 1.2) * wave.amplitude * 0.2;
+          const dx = nx - mouse.x;
+          const dy = (baseY / h) - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const push = Math.exp(-dist * dist * 6) * (mxInf + myInf);
+          const y = baseY + y1 + y2 + y3 + push;
+          x === -20 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        const hue = wave.hue + Math.sin(t * 0.003) * 12;
+        const sat = 35 + Math.sin(t * 0.004 + wave.phase) * 20;
+        ctx.strokeStyle = `hsla(${hue}, ${sat}%, 55%, ${wave.alpha})`;
+        ctx.lineWidth = wave.thickness;
+        ctx.stroke();
+      }
+
+      function animate() {
+        time++;
+        ctx.clearRect(0, 0, w, h);
+        const grd = ctx.createRadialGradient(w * mouse.x, h * mouse.y, 0, w * mouse.x, h * mouse.y, w * 0.45);
+        grd.addColorStop(0, "rgba(50, 30, 90, 0.07)");
+        grd.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, w, h);
+        waves.forEach((wave) => drawWave(wave, time));
+        animId = requestAnimationFrame(animate);
+      }
+      animate();
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) cancelAnimationFrame(animId); else animate();
+      });
+    })();
+  </script>
 
   <script src="main.js"></script>
 </body>
