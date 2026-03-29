@@ -3,48 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>スキル | izumiemi</title>
+  <title>Skills | izumiemi</title>
   <meta name="description" content="izumiemiのスキルセット。映像制作からAI映像・音声、自動化・開発まで。">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Sans+JP:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Navigation -->
+  <canvas id="bg-canvas-inner" class="bg-canvas-inner"></canvas>
+
   <nav class="nav">
     <a href="index.html" class="nav__logo">izumiemi</a>
     <ul class="nav__links">
-      <li><a href="works.html">強み</a></li>
-      <li><a href="works.html#works">実績</a></li>
-      <li><a href="skills.html" class="active">スキル</a></li>
-      <li><a href="mindset.html">マインドセット</a></li>
-      <li><a href="#contact">お問い合わせ</a></li>
+      <li><a href="works.html">Works</a></li>
+      <li><a href="skills.html" class="active">Skills</a></li>
+      <li class="nav-dot">●</li>
+      <li><a href="mindset.html">Mindset</a></li>
+      <li><a href="mailto:copy.con.file.txt@gmail.com">Contact</a></li>
     </ul>
     <div class="nav__hamburger" aria-label="メニューを開く">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </div>
     <div class="nav__overlay">
-      <a href="index.html">ホーム</a>
-      <a href="works.html">強み</a>
-      <a href="works.html#works">実績</a>
-      <a href="skills.html" class="active">スキル</a>
-      <a href="mindset.html">マインドセット</a>
-      <a href="#contact">お問い合わせ</a>
+      <a href="index.html">Home</a>
+      <a href="works.html">Works</a>
+      <a href="skills.html" class="active">Skills</a>
+      <a href="mindset.html">Mindset</a>
+      <a href="mailto:copy.con.file.txt@gmail.com">Contact</a>
     </div>
   </nav>
 
   <div class="page-wrapper">
 
-    <section>
+    <div class="page-hero">
       <div class="container">
-        <p class="section-label fade-in">03 — Skills</p>
-        <h2 class="section-title fade-in">スキルセット</h2>
+        <p class="page-hero__label fade-in">02 — Skills</p>
+        <h1 class="page-hero__title fade-in">Skills</h1>
+      </div>
+    </div>
 
-        <!-- 映像制作 -->
+    <section class="section">
+      <div class="container">
+
         <div class="skills-section fade-in">
           <div class="skills-section__header">
             <h3 class="skills-section__title">映像制作</h3>
@@ -61,7 +60,6 @@
           </div>
         </div>
 
-        <!-- AI映像・音声 -->
         <div class="skills-section fade-in">
           <div class="skills-section__header">
             <h3 class="skills-section__title">AI映像・音声</h3>
@@ -77,7 +75,6 @@
           </div>
         </div>
 
-        <!-- 自動化・開発 -->
         <div class="skills-section fade-in">
           <div class="skills-section__header">
             <h3 class="skills-section__title">自動化・開発</h3>
@@ -94,7 +91,6 @@
           </div>
         </div>
 
-        <!-- 注記 -->
         <div class="skills-note fade-in">
           <strong>「AI協働」について</strong><br>
           自動化・開発領域はAIと協働しながら実装しています。コードの保守・修正・機能追加まで対応可能で、実際に動くプロダクトを納品した実績があります。
@@ -103,26 +99,19 @@
       </div>
     </section>
 
-    <!-- Contact Footer -->
     <footer class="contact-footer" id="contact">
       <div class="container">
-        <p class="contact-footer__label fade-in">05 — Contact</p>
+        <p class="contact-footer__label fade-in">Contact</p>
         <h2 class="contact-footer__title fade-in">お仕事のご相談</h2>
-        <p class="contact-footer__desc fade-in">
-          動画制作・AI自動化・業務効率化など、<br>
-          まずはお気軽にご連絡ください。<br>
-          フルリモートで全国対応しています。
-        </p>
+        <p class="contact-footer__desc fade-in">動画制作・AI自動化・業務効率化など、<br>まずはお気軽にご連絡ください。<br>フルリモートで全国対応しています。</p>
         <a href="mailto:copy.con.file.txt@gmail.com" class="contact-footer__email fade-in">copy.con.file.txt@gmail.com</a>
       </div>
     </footer>
-
     <div class="site-footer">
       <div class="container">
         <p class="site-footer__copy">© 2026 izumiemi All Rights Reserved.</p>
       </div>
     </div>
-
   </div>
 
   <script src="main.js"></script>
